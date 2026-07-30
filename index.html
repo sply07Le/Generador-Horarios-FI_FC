@@ -255,6 +255,15 @@ input, select, textarea { font-family: inherit; }
   margin: 0 auto;
 }
 
+.horario-wrapper.no-prof {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.horario-wrapper.no-prof .horario-header-logos { width: 100%; }
+.horario-wrapper.no-prof .table-scroll { width: 100%; }
+
 /* Background image layer */
 .horario-bg {
   position: absolute;
@@ -375,7 +384,7 @@ input, select, textarea { font-family: inherit; }
 .corner-divider {
   height: 1px;
   background: rgba(255,255,255,0.3);
-  transform: rotate(-20deg);
+  transform: rotate(20deg);
   margin: 1px 0;
 }
 
@@ -404,7 +413,7 @@ input, select, textarea { font-family: inherit; }
 /* CELLS */
 .td-cell {
   border: 2px solid var(--table-line-color);
-  height: 42px;
+  height: 56px;
   vertical-align: top;
   padding: 0;
 }
@@ -418,9 +427,23 @@ input, select, textarea { font-family: inherit; }
 .cell-inner {
   display: flex;
   height: 100%;
-  min-height: 42px;
+  min-height: 56px;
   position: relative;
 }
+
+/* Compact export tweaks: applied only during PDF export to reduce row height */
+.export-compact .td-cell { height: 36px !important; }
+.export-compact .cell-inner { min-height: 36px !important; }
+.export-compact .cell-nombre { font-size: 0.64rem !important; }
+.export-compact .cell-clave, .export-compact .cell-sub { font-size: 0.58rem !important; }
+/* Reduce professor table density during export to avoid extra pages */
+.export-compact .prof-table th,
+.export-compact .prof-table td {
+  padding: 4px 8px !important;
+  font-size: 0.62rem !important;
+}
+.export-compact .prof-grid { gap: 8px !important; }
+.export-compact .prof-section { margin-top: 8px !important; }
 
 .cell-bar {
   width: 7px;
@@ -708,24 +731,40 @@ input, select, textarea { font-family: inherit; }
 }
 .sesiones-header label { margin-bottom: 0; }
 
-.toggle-custom {
-  display: flex;
+  .toggle-custom {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 0.78rem !important;
-  font-weight: 400 !important;
-  color: rgba(255,255,255,0.55) !important;
+  font-weight: 500 !important;
+  color: rgba(255,255,255,0.85) !important;
   cursor: pointer;
+  min-height: 36px;
+  line-height: 1.2;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
 }
-.toggle-custom input { width: auto; cursor: pointer; }
+.toggle-custom input {
+  width: auto;
+  cursor: pointer;
+  margin: 0;
+}
 
 .salon-toggle {
-  width: fit-content;
-  padding: 7px 10px;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 6px;
-  background: rgba(255,255,255,0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
 }
+
+.checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+.checkbox-group .toggle-custom { width: 100%; }
 
 .sesiones-list { display: flex; flex-direction: column; gap: 6px; }
 
@@ -875,8 +914,24 @@ input, select, textarea { font-family: inherit; }
   width: 12px; height: 12px;
   border-radius: 3px;
 }
-.legend-dot.ocupado { background: var(--navy); opacity: 0.5; }
-.legend-dot.libre   { background: #e8f4f6; border: 1px solid var(--border); }
+.legend-dot.ocupado {
+  background: var(--table-cell-bg); /* same as occupied cell background (white) */
+  border: 1px solid var(--table-line-color);
+}
+.legend-dot.libre {
+  background: #e8f4f6;
+  border: 1px solid var(--border);
+}
+
+/* Estudio: clase tag should be white background to match added class style */
+.estudio-resumen .clave-tag {
+  background: #ffffff !important;
+  color: var(--text) !important;
+  border: 1px solid var(--table-line-color) !important;
+}
+
+/* Legend for extracurricular activities */
+.legend-dot.actividad { background: #7ec8d8; border: 1px solid rgba(124,201,216,0.4); }
 
 /* Libre cells in estudio */
 .libre-inner {
@@ -1056,6 +1111,29 @@ input, select, textarea { font-family: inherit; }
 
 
 /* ── CONFIG PANEL ─────────────────────────────────────────── */
+.config-day-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.config-day-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  background: #f8fafc;
+}
+
+.config-day-option input {
+  width: auto;
+  margin: 0;
+}
+
 .config-wrap {
   max-width: 760px;
   display: flex;
@@ -1371,6 +1449,85 @@ input, select, textarea { font-family: inherit; }
   margin-bottom: 8px;
 }
 
+@media (max-width: 1024px) {
+  .app-main { padding: 16px; }
+  .horario-layout { flex-direction: column; gap: 16px; }
+  .side-panel { width: 100%; }
+  .side-panel-body { max-height: none; }
+  .toolbar { flex-wrap: wrap; }
+  .prof-grid { grid-template-columns: 1fr; }
+  .config-row-2,
+  .config-row-3 { grid-template-columns: 1fr; }
+  .logo-upload-area { flex-direction: column; gap: 16px; }
+  .bg-upload-area { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+  .app-nav {
+    height: auto;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .nav-tabs {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .nav-tab {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+  }
+  .app-main { padding: 12px; }
+  .toolbar { gap: 10px; }
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+    justify-content: center;
+  }
+  .horario-wrapper { padding: 12px 10px 12px; }
+  .semestre-pill { padding: 8px 24px; font-size: 0.95rem; }
+  .horario-header-logos {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .horario-meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+  .horario-table {
+    font-size: 0.62rem;
+    min-width: 560px;
+  }
+  .th-corner { width: 90px; }
+  .cell-body { padding: 4px 12px 4px 6px; }
+  .cell-nombre { font-size: 0.62rem; }
+  .cell-clave,
+  .cell-sub { font-size: 0.58rem; }
+  .modal-box { max-width: 100%; }
+  .modal-header,
+  .modal-box .form-group,
+  .form-row-3,
+  .modal-footer,
+  .form-error,
+  .conflict-warning {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .form-row-3 { grid-template-columns: 1fr; gap: 8px; }
+  .sesion-row { flex-direction: column; align-items: stretch; }
+  .sesion-salon-input { max-width: none; }
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+  .modal-footer .btn-ghost,
+  .modal-footer .btn-primary {
+    width: 100%;
+  }
+}
+
 @page {
   size: letter;
   margin: 8mm;
@@ -1437,15 +1594,11 @@ const materiasDB = [
   { "clave": "1322", "nombre": "CINEMÁTICA Y DINÁMICA",                  "creditos": 8,  "semestre": 3, "horasTeo": 4, "horasPra": 0, "facultad": "FI" },
   { "clave": "1225", "nombre": "MANUFACTURA I (L+)",                     "creditos": 8,  "semestre": 3, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "1222", "nombre": "CULTURA Y COMUNICACIÓN",                 "creditos": 2,  "semestre": 3, "horasTeo": 0, "horasPra": 2, "facultad": "FI" },
-  { "clave": "6225", "nombre": "LAB. DE MANUFACTURA I",                  "creditos": 0, "semestre":  3, "horasTeo": 0, "horasPra": 2, "facultad": "FI" },
   
   { "clave": "1569", "nombre": "ESTADÍSTICA",                            "creditos": 8,  "semestre": 4, "horasTeo": 4, "horasPra": 0, "facultad": "FI" },
   { "clave": "1414", "nombre": "ELECTRICIDAD Y MAGNETISMO (L+)",         "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "2400", "nombre": "MATERIALES I (L+)",                      "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "1437", "nombre": "TERMODINÁMICA",                          "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
-  { "clave": "6437", "nombre": "LAB. DE TERMODINÁMICA",                  "creditos": 0,  "semestre": 4, "horasTeo": 0, "horasPra": 2, "facultad": "FI" },
-
-  { "clave": "1055", "nombre": "LITERATURA HISPANOAMERICANA CONTEMPORÁNEA","creditos": 6, "semestre": 4, "horasTeo": 2, "horasPra": 2, "facultad": "FI" },
 
   { "clave": "1550", "nombre": "ANÁLISIS DE CIRCUITOS (L)",              "creditos": 10, "semestre": 5, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "1521", "nombre": "ELEMENTOS DE MECÁNICA DEL MEDIO CONTINUO","creditos": 8, "semestre": 5, "horasTeo": 4, "horasPra": 0, "facultad": "FI" },
@@ -1518,7 +1671,7 @@ const materiasDB = [
   { "clave" : "0901", "nombre": "LABORATORIO DE FÍSICA CONTEMPORÁNEA II","creditos": 6,  "semestre": 9, "horasTeo": 0, "horasPra": 3, "facultad": "FC" }
 ];
 
-const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+const DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const VISTAS = ['horario', 'estudio', 'config'];
 const LABELS = { horario: 'Horario', estudio: 'Estudio independiente', config: 'Configuración' };
 const COLORES = ['#4CAF50','#2196F3','#FF9800','#E91E63','#9C27B0','#00BCD4','#F44336','#795548','#FF5722','#3F51B5','#009688','#8BC34A','#FFC107','#607D8B','#5C6BC0'];
@@ -1593,6 +1746,7 @@ window.App = {
     vista: 'horario',
     formAbierto: false,
     editandoId: null,
+    formTipo: 'materia',
     exporting: false,
     config: {
       semestre: '',
@@ -1600,6 +1754,7 @@ window.App = {
       carrera: '',
       horaMin: 7,
       horaMax: 13,
+      diasHorario: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'],
       fechaInicio: '',
       fechaFin: '',
       bgDataUrl: null,
@@ -1613,7 +1768,8 @@ window.App = {
       alumnoColor: '#2D7080',
       carreraColor: '#2D7080',
       semestreTextColor: '#ffffff',
-      semestreBg: '#2D7080'
+    semestreBg: '#2D7080',
+    showProfesorTable: true
     },
     filtroFacultad: '',
     materias: [],
@@ -1628,7 +1784,9 @@ window.App = {
       duracionCustom: false,
       sesiones: [{ dia: 'Lunes', horaInicio: 7, horaFin: 9, salon: '', esLab: false }],
       error: '',
-      conflictos: []
+      conflictos: [],
+      nombreActividad: '',
+      descripcion: ''
     }
   },
 
@@ -1696,6 +1854,23 @@ window.App = {
   },
 
   setFiltroFacultad(v) { this.state.filtroFacultad = v; this.render(); },
+
+  getDiasHorario() {
+    const dias = this.state.config.diasHorario;
+    if (Array.isArray(dias)) {
+      return DIAS.filter(d => dias.includes(d));
+    }
+    return ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+  },
+
+  toggleDiaHorario(dia, checked) {
+    const dias = this.state.config.diasHorario || [];
+    const nextDias = checked
+      ? [...new Set([...dias, dia])]
+      : dias.filter(d => d !== dia);
+    this.state.config.diasHorario = DIAS.filter(d => nextDias.includes(d));
+    this.render();
+  },
 
   _focusField: null,
   _restoreFocus() {
@@ -1765,12 +1940,16 @@ window.App = {
 
     return `
       <div class="toolbar">
-        <button class="btn-primary" onclick="App.abrirModal()">+ Agregar materia</button>
-        ${materias.length === 0 ? '<span class="toolbar-hint">Agrega tus materias para construir tu horario.</span>' : ''}
+        <button class="btn-primary" onclick="App.abrirModal(null,'materia')">+ Agregar materia</button>
+        <button class="btn-ghost" onclick="App.abrirModal(null,'actividad')">+ Agregar actividad</button>
+        ${materias.length === 0 ? '<span class="toolbar-hint">Agrega tus materias o actividades para construir tu horario.</span>' : ''}
+        <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+          <label class="toggle-custom" style="margin:0;color:var(--white);background:#2b475b;border:1px solid rgba(0,0,0,0.12);padding:6px 10px;border-radius:8px"><input type="checkbox" ${this.state.config.showProfesorTable ? 'checked' : ''} onchange="App.setConfig('showProfesorTable', this.checked)"> Mostrar tabla Clave/Profesor</label>
+        </div>
       </div>
       <div class="horario-layout">
         <div class="horario-col">
-          <div id="horario-exportable" class="horario-wrapper">
+          <div id="horario-exportable" class="horario-wrapper${config.showProfesorTable ? '' : ' no-prof'}">
             ${config.bgDataUrl ? `<div class="horario-bg" style="background-image:url('${config.bgDataUrl}');opacity:${config.bgOpacity}"></div>` : ''}
             <div class="horario-header-logos">
               <div class="logo-slot">${config.logoUnamDataUrl ? `<img src="${config.logoUnamDataUrl}" alt="UNAM">` : ''}</div>
@@ -1785,20 +1964,20 @@ window.App = {
                 <thead>
                   <tr>
                     <th class="th-corner"><div class="corner-inner"><span class="corner-dia">Día</span><div class="corner-divider"></div><span class="corner-hora">Hora</span></div></th>
-                    ${DIAS.map(dia => `<th class="th-dia">${dia}</th>`).join('')}
+                    ${this.getDiasHorario().map(dia => `<th class="th-dia">${dia}</th>`).join('')}
                   </tr>
                 </thead>
                 <tbody>
                   ${horas.map(hora => `
                     <tr>
                       ${renderCeldaHora(hora, intervalos)}
-                      ${DIAS.map(dia => this.renderCeldaHorario(dia, hora)).join('')}
+                      ${this.getDiasHorario().map(dia => this.renderCeldaHorario(dia, hora)).join('')}
                     </tr>
                   `).join('')}
                 </tbody>
               </table>
             </div>
-            ${this.renderProfesorGrid()}
+            ${this.state.config.showProfesorTable ? this.renderProfesorGrid() : ''}
           </div>
         </div>
         ${materias.length > 0 ? `
@@ -1810,7 +1989,7 @@ window.App = {
                   <span class="side-clave-tag" style="background:${m.color}">${m.clave}</span>
                   <div class="side-materia-info">
                     <div class="side-materia-nombre">${m.nombre}</div>
-                    <div class="side-materia-prof">${m.profesor}</div>
+                    <div class="side-materia-prof">${m.tipo === 'actividad' ? (m.descripcion || 'Actividad extracurricular') : (m.profesor || '')}</div>
                   </div>
                   <button class="btn-edit-materia" onclick="App.abrirEditar('${m.id}')" title="Editar">✏️</button>
                   <button class="btn-icon-sm" onclick="App.eliminarMateria('${m.id}')" title="Eliminar">✕</button>
@@ -1835,9 +2014,10 @@ window.App = {
         <div class="cell-inner">
           <div class="cell-bar" style="background-color:${materia.color}"></div>
           <div class="cell-body">
-            ${sesion.esLab ? '<div class="cell-lab-label">LAB. DE</div>' : ''}
-            <div class="cell-nombre">${materia.nombre} <span class="cell-clave">[${materia.clave}]</span></div>
-            <div class="cell-sub">${materia.grupo}</div>
+            ${sesion.esLab && materia.tipo !== 'actividad' ? '<div class="cell-lab-label">LAB. DE</div>' : ''}
+            <div class="cell-nombre">${materia.nombre}${materia.tipo !== 'actividad' ? ` <span class="cell-clave">[${materia.clave}]</span>` : ''}</div>
+            ${materia.tipo === 'actividad' && materia.descripcion ? `<div class="cell-sub">${materia.descripcion}</div>` : ''}
+            ${materia.tipo !== 'actividad' ? `<div class="cell-sub">${materia.grupo}</div>` : ''}
             ${salon ? `<div class="cell-sub">${salon}</div>` : ''}
           </div>
           <button class="cell-delete" onclick="App.eliminarMateria('${materia.id}')" title="Eliminar">×</button>
@@ -1848,10 +2028,11 @@ window.App = {
 
   renderProfesorGrid() {
     const { materias } = this.state;
-    if (!materias.length) return '';
-    const half = Math.ceil(materias.length / 2);
-    const left = materias.slice(0, half);
-    const right = materias.slice(half);
+    const materiasProfesores = materias.filter(m => m.tipo !== 'actividad');
+    if (!materiasProfesores.length) return '';
+    const half = Math.ceil(materiasProfesores.length / 2);
+    const left = materiasProfesores.slice(0, half);
+    const right = materiasProfesores.slice(half);
     const rows = arr => arr.map(m => `<tr><td><span class="clave-tag" style="background:${m.color}">${m.clave}</span></td><td class="prof-nombre">${(m.profesor||'').toUpperCase()}</td></tr>`).join('');
     return `
       <div class="prof-section">
@@ -1912,21 +2093,25 @@ window.App = {
           </div>
         ` : ''}
         <div class="estudio-label-row">
-          <span class="estudio-legend"><span class="legend-dot ocupado"></span> Clase &nbsp;<span class="legend-dot libre"></span> Tiempo disponible</span>
+          ${(() => {
+            const actividades = (this.state.materias||[]).filter(m => m.tipo === 'actividad');
+            const actividadHtml = actividades.length ? `&nbsp;<span class="legend-dot actividad" style="background:${actividades[0].color}"></span> Actividad` : '';
+            return `<span class="estudio-legend"><span class="legend-dot ocupado"></span> Clase &nbsp;<span class="legend-dot libre"></span> Tiempo disponible ${actividadHtml}</span>`;
+          })()}
         </div>
         <div class="table-scroll">
           <table class="horario-table">
             <thead>
               <tr>
                 <th class="th-corner"><div class="corner-inner"><span class="corner-dia">Día</span><div class="corner-divider"></div><span class="corner-hora">Hora</span></div></th>
-                ${DIAS.map(d => `<th class="th-dia">${d}</th>`).join('')}
+                ${this.getDiasHorario().map(d => `<th class="th-dia">${d}</th>`).join('')}
               </tr>
             </thead>
             <tbody>
               ${horas.map(hora => `
                 <tr>
                   ${renderCeldaHora(hora, intervalos)}
-                  ${DIAS.map(dia => {
+                  ${this.getDiasHorario().map(dia => {
                     const info = this.getCellInfo(dia, hora);
                     if (info && info.sesion.horaInicio < hora) return '';
                     if (!info) return `<td class="td-cell td-libre"><div class="libre-inner"><div class="libre-line"></div><div class="libre-line"></div></div></td>`;
@@ -2044,6 +2229,19 @@ window.App = {
             </div>
           </div>
           <p class="config-hint">Intervalos desde ${config.horaMin}:00 hasta ${config.horaMax}:00. La hora fin funciona como límite final.</p>
+        </section>
+
+        <section class="config-section">
+          <h3 class="config-section-title">Días visibles del horario principal</h3>
+          <div class="config-day-options">
+            ${DIAS.map(dia => `
+              <label class="config-day-option">
+                <input type="checkbox" ${config.diasHorario.includes(dia) ? 'checked' : ''} onchange="App.toggleDiaHorario('${dia}', this.checked)">
+                <span>${dia}</span>
+              </label>
+            `).join('')}
+          </div>
+          <p class="config-hint">Activa sábado y/o domingo para que aparezcan como columnas en el horario principal y en la vista de estudio.</p>
         </section>
 
         <section class="config-section">
@@ -2182,32 +2380,41 @@ window.App = {
   },
 
   // ── MODAL FORMULARIO ─────────────────────────────────────────────────
-  abrirModal(editId) {
+  abrirModal(editId, tipo = 'materia') {
     this.state.formAbierto = true;
     this.state.editandoId = editId || null;
+    this.state.formTipo = tipo;
     if (editId) {
       const m = this.state.materias.find(x => x.id === editId);
+      const esActividad = m?.tipo === 'actividad';
+      this.state.formTipo = esActividad ? 'actividad' : 'materia';
       this.state.form = {
         busqueda: m.nombre,
-        seleccionada: { clave: m.clave, nombre: m.nombre, creditos: m.creditos, horasTeo: m.horasTeo, horasPra: m.horasPra, facultad: m.facultad },
-        profesor: m.profesor,
-        grupo: m.grupo,
-        salon: m.salon,
+        seleccionada: esActividad ? null : { clave: m.clave, nombre: m.nombre, creditos: m.creditos, horasTeo: m.horasTeo, horasPra: m.horasPra, facultad: m.facultad },
+        profesor: m.profesor || '',
+        grupo: m.grupo || '',
+        salon: m.salon || '',
         mismoSalon: m.mismoSalon !== false,
+        mismoHorario: false,
         color: m.color,
         duracionCustom: true,
         sesiones: JSON.parse(JSON.stringify(m.sesiones)).map(s => ({ salon: m.salon || '', ...s })),
         error: '',
-        conflictos: []
+        conflictos: [],
+        nombreActividad: esActividad ? m.nombre : '',
+        descripcion: esActividad ? (m.descripcion || '') : ''
       };
     } else {
       this.state.form = {
         busqueda: '', seleccionada: null, profesor: '', grupo: '', salon: '',
         mismoSalon: true,
+        mismoHorario: true,
         color: COLORES[Math.floor(Math.random() * COLORES.length)],
         duracionCustom: false,
         sesiones: [{ dia: 'Lunes', horaInicio: 7, horaFin: 9, salon: '', esLab: false }],
-        error: '', conflictos: []
+        error: '', conflictos: [],
+        nombreActividad: '',
+        descripcion: ''
       };
     }
     this.render();
@@ -2232,6 +2439,15 @@ window.App = {
   },
 
   toggleDuracionCustom(checked) { this.state.form.duracionCustom = checked; this.render(); },
+  toggleMismoHorario(checked) {
+    const f = this.state.form;
+    f.mismoHorario = checked;
+    if (checked && f.sesiones.length) {
+      const base = f.sesiones[0];
+      f.sesiones = f.sesiones.map(s => ({ ...s, dia: base.dia, horaInicio: base.horaInicio, horaFin: base.horaFin }));
+    }
+    this.render();
+  },
   toggleMismoSalon(checked) {
     const f = this.state.form;
     f.mismoSalon = checked;
@@ -2243,13 +2459,33 @@ window.App = {
     f.salon = value;
     if (f.mismoSalon) f.sesiones.forEach(s => { s.salon = value; });
   },
-  addSesion() { this.state.form.sesiones.push({ dia: 'Lunes', horaInicio: 7, horaFin: 9, salon: this.state.form.mismoSalon ? this.state.form.salon : '', esLab: false }); this.render(); },
+  addSesion() {
+    const f = this.state.form;
+    const base = f.sesiones[0] || { dia: 'Lunes', horaInicio: 7, horaFin: 9 };
+    const nuevaSesion = {
+      dia: base.dia,
+      horaInicio: base.horaInicio,
+      horaFin: base.horaFin,
+      salon: f.mismoSalon ? f.salon : '',
+      esLab: false
+    };
+    f.sesiones.push(nuevaSesion);
+    if (f.mismoHorario) {
+      const referencia = f.sesiones[0];
+      f.sesiones = f.sesiones.map(s => ({ ...s, dia: referencia.dia, horaInicio: referencia.horaInicio, horaFin: referencia.horaFin }));
+    }
+    this.render();
+  },
   removeSesion(i) { this.state.form.sesiones.splice(i, 1); this.render(); },
   updateSesion(i, field, value) {
     const f = this.state.form;
     f.sesiones[i][field] = value;
     if (field === 'salon') return;
     if (field === 'horaInicio' && !f.duracionCustom) f.sesiones[i].horaFin = parseInt(value) + 2;
+    if (f.mismoHorario && ['dia', 'horaInicio', 'horaFin'].includes(field)) {
+      const base = { dia: f.sesiones[i].dia, horaInicio: f.sesiones[i].horaInicio, horaFin: f.sesiones[i].horaFin };
+      f.sesiones = f.sesiones.map(s => ({ ...s, ...base }));
+    }
     this.render();
   },
   setColor(c) { this.state.form.color = c; this.render(); },
@@ -2279,9 +2515,27 @@ window.App = {
 
   guardarMateria() {
     const f = this.state.form;
-    if (!f.seleccionada) { f.error = 'Selecciona una materia del catálogo.'; this.render(); return; }
-    if (!f.profesor.trim()) { f.error = 'Ingresa el nombre del profesor.'; this.render(); return; }
+    const esActividad = this.state.formTipo === 'actividad';
+    if (esActividad) {
+      if (!f.nombreActividad.trim()) { f.error = 'Ingresa el nombre de la actividad.'; this.render(); return; }
+    } else {
+      if (!f.seleccionada) { f.error = 'Selecciona una materia del catálogo.'; this.render(); return; }
+      if (!f.profesor.trim()) { f.error = 'Ingresa el nombre del profesor.'; this.render(); return; }
+    }
     if (!f.sesiones.length) { f.error = 'Agrega al menos una sesión.'; this.render(); return; }
+
+    if (!esActividad && f.seleccionada) {
+      const yaExiste = this.state.materias.some(m =>
+        m.id !== this.state.editandoId &&
+        m.tipo !== 'actividad' &&
+        m.clave === f.seleccionada.clave
+      );
+      if (yaExiste) {
+        f.error = 'Esta materia ya está agregada al horario.';
+        this.render();
+        return;
+      }
+    }
 
     const conflictos = this.detectarConflictos(f.sesiones);
     if (conflictos.length) {
@@ -2291,7 +2545,26 @@ window.App = {
       return;
     }
 
-    const datos = {
+    const datos = esActividad ? {
+      tipo: 'actividad',
+      clave: 'ACT',
+      nombre: f.nombreActividad.trim(),
+      descripcion: f.descripcion.trim(),
+      creditos: 0,
+      horasTeo: null,
+      horasPra: null,
+      facultad: null,
+      profesor: '',
+      grupo: '',
+      salon: f.salon.trim(),
+      mismoSalon: f.mismoSalon,
+      color: f.color,
+      sesiones: JSON.parse(JSON.stringify(f.sesiones)).map(s => ({
+        ...s,
+        salon: f.mismoSalon ? f.salon.trim() : (s.salon || '').trim()
+      }))
+    } : {
+      tipo: 'materia',
       clave: f.seleccionada.clave, nombre: f.seleccionada.nombre,
       creditos: f.seleccionada.creditos,
       horasTeo: f.seleccionada.horasTeo ?? null,
@@ -2319,8 +2592,9 @@ window.App = {
   renderModal() {
     const f = this.state.form;
     const esEdicion = !!this.state.editandoId;
+    const esActividad = this.state.formTipo === 'actividad';
     const ff = this.state.filtroFacultad;
-    const resultados = (!f.seleccionada && f.busqueda.length >= 2)
+    const resultados = (!esActividad && !f.seleccionada && f.busqueda.length >= 2)
       ? materiasDB.filter(m =>
           (m.nombre.toLowerCase().includes(f.busqueda.toLowerCase()) || m.clave.startsWith(f.busqueda)) &&
           (!ff || m.facultad === ff)
@@ -2338,11 +2612,11 @@ window.App = {
       <div class="modal-overlay" onclick="event.target===this&&App.cerrarModal()">
         <div class="modal-box">
           <div class="modal-header">
-            <h2>${esEdicion ? '✏️ Editar materia' : 'Agregar materia'}</h2>
+            <h2>${esEdicion ? (esActividad ? '✏️ Editar actividad' : '✏️ Editar materia') : (esActividad ? 'Agregar actividad' : 'Agregar materia')}</h2>
             <button class="modal-close" onclick="App.cerrarModal()">×</button>
           </div>
 
-          <div class="form-group" style="display:flex;gap:10px;align-items:flex-end">
+          ${!esActividad ? `<div class="form-group" style="display:flex;gap:10px;align-items:flex-end">
             <div style="flex:1">
               <label>Buscar en catálogo <span class="label-hint">(nombre o clave)</span></label>
               <div class="search-wrap">
@@ -2368,8 +2642,8 @@ window.App = {
                 ${FACULTADES.map(fac=>`<option value="${fac.clave}" ${ff===fac.clave?'selected':''}>${fac.clave} – ${fac.nombre}</option>`).join('')}
               </select>
             </div>
-          </div>
-          ${f.seleccionada ? `
+          </div>` : ''}
+          ${!esActividad && f.seleccionada ? `
             <div class="selected-badge" style="margin: 0 24px 4px;">
               ✓ <strong>[${f.seleccionada.clave}]</strong> ${f.seleccionada.nombre} — ${f.seleccionada.creditos} cr.
               <span class="selected-facultad-tag selected-facultad-${f.seleccionada.facultad||'fi'}">${f.seleccionada.facultad||'?'}</span>
@@ -2377,15 +2651,22 @@ window.App = {
             ${estudioInfo ? `<div class="estudio-preview-badge" style="margin:0 24px 4px;">${estudioInfo}</div>` : ''}
           ` : ''}
 
-          <div class="form-row-3">
-            <div class="form-group"><label>Profesor</label><input value="${f.profesor}" oninput="App.state.form.profesor=this.value" placeholder="Nombre del profesor"></div>
-            <div class="form-group"><label>Grupo</label><input value="${f.grupo}" oninput="App.state.form.grupo=this.value" placeholder="G-01"></div>
-            <div class="form-group"><label>Salón</label><input value="${f.salon}" oninput="App.setSalonGeneral(this.value)" placeholder="A 305"></div>
-          </div>
-
-          <div class="form-group">
-            <label class="toggle-custom salon-toggle"><input type="checkbox" ${f.mismoSalon?'checked':''} onchange="App.toggleMismoSalon(this.checked)"> Aplicar el mismo salón a todas las sesiones</label>
-          </div>
+          ${esActividad ? `
+            <div class="form-group">
+              <label>Nombre de la actividad <span class="label-hint">(obligatorio)</span></label>
+              <input value="${f.nombreActividad}" oninput="App.state.form.nombreActividad=this.value" placeholder="Ej: Club de teatro, voluntariado…">
+            </div>
+            <div class="form-group">
+              <label>Descripción de la actividad</label>
+              <textarea rows="3" oninput="App.state.form.descripcion=this.value" placeholder="Describe la actividad extracurricular" style="width:100%;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 10px;font-size:0.86rem;color:#ffffff;background:rgba(255,255,255,0.09);resize:vertical">${f.descripcion}</textarea>
+            </div>
+          ` : `
+            <div class="form-row-3">
+              <div class="form-group"><label>Profesor</label><input value="${f.profesor}" oninput="App.state.form.profesor=this.value" placeholder="Nombre del profesor"></div>
+              <div class="form-group"><label>Grupo</label><input value="${f.grupo}" oninput="App.state.form.grupo=this.value" placeholder="G-01"></div>
+              <div class="form-group"><label>Salón</label><input value="${f.salon}" oninput="App.setSalonGeneral(this.value)" placeholder="A 305"></div>
+            </div>
+          `}
 
           <div class="form-group">
             <label>Color identificador</label>
@@ -2395,16 +2676,21 @@ window.App = {
             </div>
           </div>
 
+          <div class="form-group checkbox-group">
+            <label class="toggle-custom salon-toggle"><input type="checkbox" ${f.mismoSalon?'checked':''} onchange="App.toggleMismoSalon(this.checked)"> Aplicar el mismo salón a todas las sesiones</label>
+            <label class="toggle-custom salon-toggle"><input type="checkbox" ${f.mismoHorario?'checked':''} onchange="App.toggleMismoHorario(this.checked)"> Aplicar el mismo horario a todas las sesiones</label>
+            <label class="toggle-custom salon-toggle"><input type="checkbox" ${f.duracionCustom?'checked':''} onchange="App.toggleDuracionCustom(this.checked)"> Duración personalizada</label>
+          </div>
+
           <div class="form-group">
             <div class="sesiones-header">
               <label>Sesiones</label>
-              <label class="toggle-custom"><input type="checkbox" ${f.duracionCustom?'checked':''} onchange="App.toggleDuracionCustom(this.checked)"> Duración personalizada</label>
             </div>
             <div class="sesiones-list">
               ${f.sesiones.map((s, i) => `
                 <div class="sesion-row">
                   <select onchange="App.updateSesion(${i},'dia',this.value)">
-                    ${DIAS.map(d=>`<option value="${d}" ${s.dia===d?'selected':''}>${d}</option>`).join('')}
+                    ${this.getDiasHorario().map(d=>`<option value="${d}" ${s.dia===d?'selected':''}>${d}</option>`).join('')}
                   </select>
                   <select onchange="App.updateSesion(${i},'horaInicio',parseInt(this.value))">
                     ${ALL_HOURS.slice(0,-1).map(h=>`<option value="${h}" ${s.horaInicio===h?'selected':''}>${String(h).padStart(2,'0')}:00</option>`).join('')}
@@ -2415,8 +2701,8 @@ window.App = {
                       ${ALL_HOURS.slice(1).map(h=>`<option value="${h}" ${s.horaFin===h?'selected':''} ${h<=s.horaInicio?'disabled':''}>${String(h).padStart(2,'0')}:00</option>`).join('')}
                     </select>
                   ` : `<span class="sesion-hora-fin">${String(s.horaInicio+2).padStart(2,'0')}:00</span>`}
-                  <label class="sesion-lab"><input type="checkbox" ${s.esLab?'checked':''} onchange="App.updateSesion(${i},'esLab',this.checked)"> LAB</label>
-                  ${!f.mismoSalon ? `<input class="sesion-salon-input" value="${s.salon || ''}" oninput="App.updateSesion(${i},'salon',this.value)" placeholder="Salón de esta sesión">` : ''}
+                  ${!esActividad ? `<label class="sesion-lab"><input type="checkbox" ${s.esLab?'checked':''} onchange="App.updateSesion(${i},'esLab',this.checked)"> LAB</label>` : ''}
+                  ${!esActividad && !f.mismoSalon ? `<input class="sesion-salon-input" value="${s.salon || ''}" oninput="App.updateSesion(${i},'salon',this.value)" placeholder="Salón de esta sesión">` : ''}
                   ${f.sesiones.length > 1 ? `<button class="btn-icon-sm" onclick="App.removeSesion(${i})" title="Eliminar sesión">✕</button>` : ''}
                 </div>
               `).join('')}
@@ -2434,7 +2720,7 @@ window.App = {
 
           <div class="modal-footer">
             <button class="btn-ghost" onclick="App.cerrarModal()">Cancelar</button>
-            <button class="btn-primary" onclick="App.guardarMateria()">${esEdicion ? 'Guardar cambios' : 'Agregar al horario'}</button>
+            <button class="btn-primary" onclick="App.guardarMateria()">${esEdicion ? 'Guardar cambios' : (esActividad ? 'Agregar actividad' : 'Agregar al horario')}</button>
           </div>
         </div>
       </div>
@@ -2477,8 +2763,8 @@ window.App = {
     }
     if (!materias.length) { alert('No hay materias en el horario.'); return; }
 
-    const diasSemana = { 'Lunes': 'MO', 'Martes': 'TU', 'Miércoles': 'WE', 'Jueves': 'TH', 'Viernes': 'FR' };
-    const diasOffset = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5 };
+    const diasSemana = { 'Lunes': 'MO', 'Martes': 'TU', 'Miércoles': 'WE', 'Jueves': 'TH', 'Viernes': 'FR', 'Sábado': 'SA', 'Domingo': 'SU' };
+    const diasOffset = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6, 'Domingo': 0 };
 
     function toICSDate(dateStr, hour) {
       const d = new Date(dateStr + 'T00:00:00');
@@ -2542,24 +2828,34 @@ window.App = {
     try {
       const id = this.state.vista === 'estudio' ? 'estudio-exportable' : 'horario-exportable';
       const el = document.getElementById(id);
+      // Apply compact export styles to reduce row heights for PDF fit
+      el.classList.add('export-compact');
+      // Render at higher scale for better quality
       const canvas = await window.html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+      // Remove the compact class after capture so UI returns to normal
+      el.classList.remove('export-compact');
+
       const imgData = canvas.toDataURL('image/png');
-      const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
-      const pdf = new window.jspdf.jsPDF({ orientation, unit: 'mm', format: 'letter' });
+      // Force letter landscape and 1.27cm margins
+      const pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'letter' });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 8;
+      const margin = 12.7; // 1.27 cm in mm
       const usableW = pageW - margin * 2;
       const usableH = pageH - margin * 2;
+
       const imgRatio = canvas.width / canvas.height;
+      // Compute draw size in mm keeping aspect ratio
       let drawW = usableW;
       let drawH = drawW / imgRatio;
       if (drawH > usableH) {
         drawH = usableH;
         drawW = drawH * imgRatio;
       }
-      const x = (pageW - drawW) / 2;
-      const y = (pageH - drawH) / 2;
+
+      // Center horizontally within usable width and place at top margin
+      const x = margin + Math.max(0, (usableW - drawW) / 2);
+      const y = margin;
       pdf.addImage(imgData, 'PNG', x, y, drawW, drawH);
       pdf.save(`horario-${this.state.config.semestre||'sem'}.pdf`);
     } finally { this.state.exporting = false; this.render(); }
