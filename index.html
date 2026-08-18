@@ -346,7 +346,45 @@ input, select, textarea { font-family: inherit; }
 }
 
 /* TABLE SCROLL */
-.table-scroll { overflow-x: auto; }
+.table-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  touch-action: pan-x;
+  scrollbar-width: thin;
+}
+
+.table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(27, 58, 107, 0.28);
+  border-radius: 999px;
+}
+
+.mobile-table-hint {
+  display: none;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 2px 12px;
+  color: var(--text-soft);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+.mobile-table-hint .swipe-icon {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(45, 112, 128, 0.12);
+  color: var(--teal);
+  font-size: 0.8rem;
+}
 
 /* ── SCHEDULE TABLE ───────────────────────────────────────── */
 .horario-table {
@@ -1015,6 +1053,9 @@ input, select, textarea { font-family: inherit; }
   border: 1px solid var(--table-line-color);
   border-radius: 8px;
   overflow: hidden;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
 }
 
 .plantilla-materia-header {
@@ -1479,23 +1520,48 @@ input, select, textarea { font-family: inherit; }
     text-align: center;
   }
   .app-main { padding: 12px; }
-  .toolbar { gap: 10px; }
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .toolbar > *:last-child {
+    grid-column: 1 / -1;
+  }
   .btn-primary,
   .btn-ghost {
     width: 100%;
     justify-content: center;
   }
-  .horario-wrapper { padding: 12px 10px 12px; }
-  .semestre-pill { padding: 8px 24px; font-size: 0.95rem; }
+  .horario-layout {
+    display: block;
+  }
+  .horario-wrapper {
+    padding: 12px 8px 10px;
+    border-radius: 10px;
+  }
   .horario-header-logos {
-    flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    min-height: 60px;
     margin-bottom: 12px;
+  }
+  .logo-slot {
+    width: 64px;
+    height: 52px;
+  }
+  .semestre-pill {
+    padding: 8px 18px;
+    font-size: 0.9rem;
   }
   .horario-meta {
     flex-direction: column;
-    gap: 8px;
-    font-size: 0.8rem;
+    gap: 6px;
+    font-size: 0.74rem;
+    margin-bottom: 8px;
+  }
+  .mobile-table-hint {
+    display: flex;
   }
   .horario-table {
     font-size: 0.62rem;
@@ -1506,6 +1572,25 @@ input, select, textarea { font-family: inherit; }
   .cell-nombre { font-size: 0.62rem; }
   .cell-clave,
   .cell-sub { font-size: 0.58rem; }
+  .side-panel {
+    margin-top: 16px;
+    width: 100%;
+    border-radius: 10px;
+  }
+  .side-panel-body {
+    max-height: 220px;
+  }
+  .side-materia-item {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .side-materia-nombre {
+    font-size: 0.74rem;
+    line-height: 1.25;
+  }
+  .side-materia-prof {
+    font-size: 0.68rem;
+  }
   .modal-box { max-width: 100%; }
   .modal-header,
   .modal-box .form-group,
@@ -1525,6 +1610,41 @@ input, select, textarea { font-family: inherit; }
   .modal-footer .btn-ghost,
   .modal-footer .btn-primary {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-main { padding: 8px; }
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+  .nav-tab {
+    flex-basis: 100%;
+  }
+  .semestre-pill {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+  }
+  .table-scroll {
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-bottom: 4px;
+  }
+  .horario-table {
+    min-width: 500px;
+  }
+  .td-hora,
+  .th-dia,
+  .th-corner {
+    white-space: nowrap;
+  }
+  .cell-body {
+    padding-right: 10px;
+  }
+  .cell-delete {
+    width: 18px;
+    height: 18px;
+    font-size: 0.9rem;
   }
 }
 
@@ -1600,6 +1720,7 @@ const materiasDB = [
   { "clave": "1414", "nombre": "ELECTRICIDAD Y MAGNETISMO (L+)",         "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "2400", "nombre": "MATERIALES I (L+)",                      "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "1437", "nombre": "TERMODINÁMICA",                          "creditos": 10, "semestre": 4, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
+  { "clave": "6437", "nombre": "TERMODINÁMICA",                          "créditos": 0,  "semestre": 4, "horasTeo": 0, "horasPra": 2, "facultad": "FI" },
 
   { "clave": "1550", "nombre": "ANÁLISIS DE CIRCUITOS (L)",              "creditos": 10, "semestre": 5, "horasTeo": 4, "horasPra": 2, "facultad": "FI" },
   { "clave": "1521", "nombre": "ELEMENTOS DE MECÁNICA DEL MEDIO CONTINUO","creditos": 8, "semestre": 5, "horasTeo": 4, "horasPra": 0, "facultad": "FI" },
@@ -1760,6 +1881,7 @@ window.App = {
       fechaFin: '',
       bgDataUrl: null,
       bgOpacity: 0.08,
+      profesorTableBg: '',
       logoFiDataUrl: null,
       logoUnamDataUrl: null,
       tableHeaderBg: '#1B3A6B',
@@ -1960,6 +2082,7 @@ window.App = {
               </div>
               <div class="logo-slot">${config.logoFiDataUrl ? `<img src="${config.logoFiDataUrl}" alt="FI">` : ''}</div>
             </div>
+            <div class="mobile-table-hint"><span class="swipe-icon">↔</span>Desliza para ver más días</div>
             <div class="table-scroll">
               <table class="horario-table">
                 <thead>
@@ -2028,13 +2151,14 @@ window.App = {
   },
 
   renderProfesorGrid() {
-    const { materias } = this.state;
-    const materiasProfesores = materias.filter(m => m.tipo !== 'actividad');
+    const { materias, config } = this.state;
+    const materiasProfesores = ordenarPorClave(materias.filter(m => m.tipo !== 'actividad'));
     if (!materiasProfesores.length) return '';
     const half = Math.ceil(materiasProfesores.length / 2);
     const left = materiasProfesores.slice(0, half);
     const right = materiasProfesores.slice(half);
-    const rows = arr => arr.map(m => `<tr><td><span class="clave-tag" style="background:${m.color}">${m.clave}</span></td><td class="prof-nombre">${(m.profesor||'').toUpperCase()}</td></tr>`).join('');
+    const cellStyle = config.profesorTableBg ? `style="background:${config.profesorTableBg}"` : '';
+    const rows = arr => arr.map(m => `<tr><td ${cellStyle}><span class="clave-tag" style="background:${m.color}">${m.clave}</span></td><td ${cellStyle} class="prof-nombre">${(m.profesor||'').toUpperCase()}</td></tr>`).join('');
     return `
       <div class="prof-section">
         <div class="prof-grid">
@@ -2100,6 +2224,7 @@ window.App = {
             return `<span class="estudio-legend"><span class="legend-dot ocupado"></span> Clase &nbsp;<span class="legend-dot libre"></span> Tiempo disponible ${actividadHtml}</span>`;
           })()}
         </div>
+        <div class="mobile-table-hint"><span class="swipe-icon">↔</span>Desliza para ver más días</div>
         <div class="table-scroll">
           <table class="horario-table">
             <thead>
@@ -2197,7 +2322,7 @@ window.App = {
       <div class="config-wrap">
         <section class="config-section">
           <h3 class="config-section-title">Datos generales</h3>
-          <div class="config-field"><label>Semestre <span class="field-hint">Ej: 2026-2</span></label><input id="cfg-semestre" value="${config.semestre}" oninput="App.setConfig('semestre',this.value,'cfg-semestre')" placeholder="2026-2"></div>
+          <div class="config-field"><label>Semestre <span class="field-hint">Ej: 2027-1</span></label><input id="cfg-semestre" value="${config.semestre}" oninput="App.setConfig('semestre',this.value,'cfg-semestre')" placeholder="2027-1"></div>
           <div class="config-field"><label>Nombre del alumno</label><input id="cfg-alumno" value="${config.alumno}" oninput="App.setConfig('alumno',this.value,'cfg-alumno')" placeholder="Nombre completo"></div>
           <div class="config-field"><label>Carrera</label><input id="cfg-carrera" value="${config.carrera}" oninput="App.setConfig('carrera',this.value,'cfg-carrera')" placeholder="Carrera"></div>
           <div class="config-row-2 config-date-row">
@@ -2280,6 +2405,21 @@ window.App = {
         </section>
 
         <section class="config-section">
+          <h3 class="config-section-title">Tabla Clave / Profesor</h3>
+          <div class="config-field">
+            <label>Fondo de los recuadros</label>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-mid);margin:0;cursor:pointer">
+                <input type="checkbox" ${!config.profesorTableBg ? 'checked' : ''} onchange="App.setConfig('profesorTableBg', this.checked ? '' : '#EAF7FB')">
+                Sin fondo
+              </label>
+              <input type="color" value="${config.profesorTableBg || '#EAF7FB'}" onchange="App.setConfig('profesorTableBg', this.value)" style="width:40px;height:36px;border-radius:6px;border:1px solid var(--border);padding:2px;cursor:pointer">
+              <span style="font-size:0.8rem;color:var(--text-mid)">${config.profesorTableBg || 'Sin fondo'}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="config-section">
           <h3 class="config-section-title">Colores del encabezado</h3>
           <div class="config-row-2">
             <div class="config-field">
@@ -2328,7 +2468,7 @@ window.App = {
               ${config.bgDataUrl ? `
                 <div class="opacity-slider-wrap">
                   <label class="opacity-label">Opacidad: <strong>${Math.round(config.bgOpacity * 100)}%</strong></label>
-                  <input type="range" min="0" max="80" step="1" value="${Math.round(config.bgOpacity * 100)}"
+                  <input type="range" min="0" max="100" step="1" value="${Math.round(config.bgOpacity * 100)}"
                     oninput="App.setConfig('bgOpacity', parseInt(this.value)/100); this.previousElementSibling.querySelector('strong').textContent = this.value+'%'"
                     class="opacity-slider">
                 </div>
@@ -2445,7 +2585,7 @@ window.App = {
     f.mismoHorario = checked;
     if (checked && f.sesiones.length) {
       const base = f.sesiones[0];
-      f.sesiones = f.sesiones.map(s => ({ ...s, dia: base.dia, horaInicio: base.horaInicio, horaFin: base.horaFin }));
+      f.sesiones = f.sesiones.map(s => ({ ...s, horaInicio: base.horaInicio, horaFin: base.horaFin }));
     }
     this.render();
   },
@@ -2473,7 +2613,7 @@ window.App = {
     f.sesiones.push(nuevaSesion);
     if (f.mismoHorario) {
       const referencia = f.sesiones[0];
-      f.sesiones = f.sesiones.map(s => ({ ...s, dia: referencia.dia, horaInicio: referencia.horaInicio, horaFin: referencia.horaFin }));
+      f.sesiones = f.sesiones.map(s => ({ ...s, horaInicio: referencia.horaInicio, horaFin: referencia.horaFin }));
     }
     this.render();
   },
@@ -2483,8 +2623,8 @@ window.App = {
     f.sesiones[i][field] = value;
     if (field === 'salon') return;
     if (field === 'horaInicio' && !f.duracionCustom) f.sesiones[i].horaFin = parseInt(value) + 2;
-    if (f.mismoHorario && ['dia', 'horaInicio', 'horaFin'].includes(field)) {
-      const base = { dia: f.sesiones[i].dia, horaInicio: f.sesiones[i].horaInicio, horaFin: f.sesiones[i].horaFin };
+    if (f.mismoHorario && ['horaInicio', 'horaFin'].includes(field)) {
+      const base = { horaInicio: f.sesiones[i].horaInicio, horaFin: f.sesiones[i].horaFin };
       f.sesiones = f.sesiones.map(s => ({ ...s, ...base }));
     }
     this.render();
@@ -2766,22 +2906,51 @@ window.App = {
 
     const diasSemana = { 'Lunes': 'MO', 'Martes': 'TU', 'Miércoles': 'WE', 'Jueves': 'TH', 'Viernes': 'FR', 'Sábado': 'SA', 'Domingo': 'SU' };
     const diasOffset = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6, 'Domingo': 0 };
+    const tzid = 'America/Mexico_City';
 
-    function toICSDate(dateStr, hour) {
-      const d = new Date(dateStr + 'T00:00:00');
-      d.setHours(hour, 0, 0, 0);
-      return d.toISOString().replace(/[-:]/g,'').replace('.000','');
+    function escapeIcsText(value) {
+      return String(value ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/;/g, '\\;')
+        .replace(/,/g, '\\,')
+        .replace(/\n/g, '\\n');
+    }
+
+    function pad2(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function toICSDateLocal(dateStr, hour, minute = 0) {
+      const d = new Date(`${dateStr}T00:00:00`);
+      d.setHours(hour, minute, 0, 0);
+      const y = d.getFullYear();
+      const m = pad2(d.getMonth() + 1);
+      const day = pad2(d.getDate());
+      const hh = pad2(d.getHours());
+      const mm = pad2(d.getMinutes());
+      return `${y}${m}${day}T${hh}${mm}00`;
+    }
+
+    function toICSDateUTC(dateStr, hour, minute = 0) {
+      const d = new Date(`${dateStr}T00:00:00`);
+      d.setHours(hour, minute, 0, 0);
+      return d.toISOString().replace(/[-:]/g, '').replace('.000Z', 'Z');
     }
 
     function firstOccurrence(startDateStr, targetDow) {
       const d = new Date(startDateStr + 'T00:00:00');
-      const dow = d.getDay(); // 0=Sun, 1=Mon...
+      const dow = d.getDay();
       const diff = ((targetDow - dow + 7) % 7);
       d.setDate(d.getDate() + diff);
-      return d.toISOString().split('T')[0];
+      const y = d.getFullYear();
+      const m = pad2(d.getMonth() + 1);
+      const day = pad2(d.getDate());
+      return `${y}-${m}-${day}`;
     }
 
-    let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Generador Horarios UNAM FI//ES\r\nCALSCALE:GREGORIAN\r\n';
+    const now = new Date();
+    const dtStamp = now.toISOString().replace(/[-:]/g, '').replace('.000Z', 'Z');
+    let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Generador Horarios UNAM FI//ES\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n';
 
     for (const m of materias) {
       for (const s of m.sesiones) {
@@ -2789,19 +2958,21 @@ window.App = {
         const dow = diasOffset[s.dia];
         const firstDate = firstOccurrence(config.fechaInicio, dow);
         const uid = crypto.randomUUID();
+        const summary = `${m.nombre} [${m.clave}]${s.esLab ? ' (LAB)' : ''}`;
         ics += `BEGIN:VEVENT\r\n`;
         ics += `UID:${uid}\r\n`;
-        ics += `DTSTART:${toICSDate(firstDate, s.horaInicio)}\r\n`;
-        ics += `DTEND:${toICSDate(firstDate, s.horaFin)}\r\n`;
-        ics += `RRULE:FREQ=WEEKLY;BYDAY=${diasSemana[s.dia]};UNTIL:${toICSDate(config.fechaFin, 23).replace('T230000','T235959')}\r\n`;
-        ics += `SUMMARY:${m.nombre} [${m.clave}]${s.esLab?' (LAB)':''}\r\n`;
-        ics += `DESCRIPTION:Profesor: ${m.profesor}\\nGrupo: ${m.grupo}\\nSalón: ${salon}\r\n`;
-        ics += `LOCATION:${salon}\r\n`;
+        ics += `DTSTAMP:${dtStamp}\r\n`;
+        ics += `DTSTART;TZID=${tzid}:${toICSDateLocal(firstDate, s.horaInicio)}\r\n`;
+        ics += `DTEND;TZID=${tzid}:${toICSDateLocal(firstDate, s.horaFin)}\r\n`;
+        ics += `RRULE:FREQ=WEEKLY;BYDAY=${diasSemana[s.dia]};UNTIL=${toICSDateUTC(config.fechaFin, 23, 59)}\r\n`;
+        ics += `SUMMARY:${escapeIcsText(summary)}\r\n`;
+        ics += `DESCRIPTION:${escapeIcsText(`Profesor: ${m.profesor}\\nGrupo: ${m.grupo}\\nSalón: ${salon}`)}\r\n`;
+        ics += `LOCATION:${escapeIcsText(salon || 'Sin salón')}\r\n`;
         ics += `END:VEVENT\r\n`;
       }
     }
 
-    ics += 'END:VCALENDAR';
+    ics += 'END:VCALENDAR\r\n';
 
     const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
     const a = document.createElement('a');
@@ -2866,41 +3037,42 @@ window.App = {
     this.state.exporting = true; this.render();
     try {
       const el = document.getElementById('plantilla-exportable');
-      const canvas = await window.html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
-      const imgData = canvas.toDataURL('image/png');
-      // Carta: 216 x 279 mm
+      if (!el) return;
+
+      const blocks = Array.from(el.querySelectorAll('.plantilla-materia-block'));
+      if (!blocks.length) return;
+
       const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 10; // mm
+      const margin = 10;
       const usableW = pageW - margin * 2;
       const usableH = pageH - margin * 2;
-      const imgW = canvas.width;
-      const imgH = canvas.height;
-      const ratio = imgW / imgH;
-      let drawW = usableW;
-      let drawH = drawW / ratio;
-      // If content taller than one page, split across pages
-      const pageContentH = usableH;
-      const pxPerMm = imgW / drawW;
-      const pxPerPage = pageContentH * pxPerMm;
-      let yOffset = 0;
-      let pageCount = 0;
-      while (yOffset < imgH) {
-        if (pageCount > 0) pdf.addPage('letter', 'portrait');
-        // Create a slice canvas
-        const sliceH = Math.min(pxPerPage, imgH - yOffset);
-        const sliceCanvas = document.createElement('canvas');
-        sliceCanvas.width = imgW;
-        sliceCanvas.height = sliceH;
-        const ctx = sliceCanvas.getContext('2d');
-        ctx.drawImage(canvas, 0, yOffset, imgW, sliceH, 0, 0, imgW, sliceH);
-        const sliceData = sliceCanvas.toDataURL('image/png');
-        const sliceDrawH = sliceH / pxPerMm;
-        pdf.addImage(sliceData, 'PNG', margin, margin, usableW, sliceDrawH);
-        yOffset += sliceH;
-        pageCount++;
+      const gap = 4;
+
+      let currentY = margin;
+
+      for (const block of blocks) {
+        const blockCanvas = await window.html2canvas(block, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+        const ratio = blockCanvas.width / blockCanvas.height;
+        let drawW = usableW;
+        let drawH = drawW / ratio;
+
+        if (drawH > usableH) {
+          drawH = usableH;
+          drawW = drawH * ratio;
+        }
+
+        if (currentY + drawH > pageH - margin) {
+          pdf.addPage('letter', 'portrait');
+          currentY = margin;
+        }
+
+        const imgData = blockCanvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', margin + (usableW - drawW) / 2, currentY, drawW, drawH);
+        currentY += drawH + gap;
       }
+
       pdf.save(`plantilla-semanal-${this.state.config.semestre||'sem'}.pdf`);
     } finally { this.state.exporting = false; this.render(); }
   }
